@@ -1,4 +1,6 @@
-﻿using System;
+﻿using QuanLyQuanCaPhe.DAO;
+using QuanLyQuanCaPhe.DTO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +14,7 @@ namespace QuanLyQuanCaPhe
 {
     public partial class fLogin : Form
     {
+
         public fLogin()
         {
             InitializeComponent();
@@ -19,10 +22,25 @@ namespace QuanLyQuanCaPhe
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            fTableManager f = new fTableManager();
-            this.Hide();
-            f.ShowDialog();
-            this.Show();
+            string userName = txbUserName.Text;
+            string passWord = txbPassWord.Text;
+            if (Login(userName, passWord))
+            {
+                Account loginAccount = AccountDAO.Instance.GetAccountByUserName(userName);
+                fTableManager f = new fTableManager(loginAccount);
+                this.Hide();
+                f.ShowDialog();
+                this.Show();
+            }
+            else
+            {
+                MessageBox.Show("Sai tài khoản hoặc mật khẩu!");
+            }
+        }
+
+        bool Login(string userName, string passWord)
+        {
+            return AccountDAO.Instance.Login(userName, passWord);
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -36,6 +54,11 @@ namespace QuanLyQuanCaPhe
             {
                 e.Cancel = true;
             }
+        }
+
+        private void txbUserName_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
